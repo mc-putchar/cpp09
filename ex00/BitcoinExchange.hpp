@@ -15,36 +15,41 @@
 
 # include <iostream>
 # include <fstream>
+# include <map>
 # include <sstream>
 # include <string>
-# include <map>
 
-# define DATABASE	"data.csv"
+/* predefined constants */
+# define DBHEADER	"date,exchange_rate"
+# define INHEADER	"date | value"
+# define FIELDSEP	" | "
 
 /* --- Error messages --- */
 # define USAGE	"Usage: ./btc [path_to_input_file]"
 # define EFOPEN	"Error: could not open file"
 # define EIHEAD	"Error: invalid header"
 # define EDBENT	"Error: database entry misconfigured"
-# define EBDATE	"Error: invalid date"
-# define EPNUMB	"Error: not a positive number"
-# define ELNUMB	"Error: number too large"
+# define EBADAY	"Error: invalid date"
+# define ENEGNO	"Error: not a positive number"
+# define EOVERF	"Error: number too large"
 # define EBADIN	"Error: bad input"
 
 class BitcoinExchange
 {
 	public:
 		BitcoinExchange();
-		BitcoinExchange(BitcoinExchange const &copy);
-		BitcoinExchange const &operator=(BitcoinExchange const &rhs);
 		~BitcoinExchange();
 
-		int parseDatabase(void);
-		void getExchangeRates(char const *input);
+		int parseDatabase(std::string const &db_file);
+		void getExchangeRates(char const *input) const;
 
 	private:
-		float getBtcPrice(std::string const &date);
 		std::map<std::string, float>	database_;
+		float getBtcPrice(std::string const &date) const;
+
+		/* deleted - our exchange cannot be copied */
+		BitcoinExchange(BitcoinExchange const &copy);
+		BitcoinExchange const &operator=(BitcoinExchange const &rhs);
 };
 
 bool	isDateValid(std::string const &date);

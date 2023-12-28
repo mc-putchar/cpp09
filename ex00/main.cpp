@@ -14,6 +14,10 @@
 
 #include "BitcoinExchange.hpp"
 
+namespace {
+	static std::string const	database("data.csv");
+}
+
 int	main(int ac, char **av)
 {
 	if (ac != 2) {
@@ -23,7 +27,7 @@ int	main(int ac, char **av)
 
 	BitcoinExchange newFTX;
 
-	if (newFTX.parseDatabase())
+	if (newFTX.parseDatabase(database))
 		return 1;
 	newFTX.getExchangeRates(av[1]);
 
