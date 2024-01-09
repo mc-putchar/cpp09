@@ -259,11 +259,14 @@ static void	fjmi_sort_vector(std::vector<Group> &groups)
 	}
 	groups.resize(half);
 	fjmi_sort_vector(groups);
-	pend.reserve(half);
+	pend.reserve(half + has_straggler);
 	for (std::vector<Group>::iterator it = groups.begin();
 	it != groups.end(); ++it) {
 		pend.push_back(it->lo.back());
 		it->lo.pop_back();
+	}
+	if (has_straggler) {
+		pend.push_back(straggler);
 	}
 	groups.reserve((half << 1) + has_straggler);
 	groups.insert(groups.begin(), pend.front());
@@ -282,16 +285,12 @@ static void	fjmi_sort_vector(std::vector<Group> &groups)
 		}
 		insert_mark = jacobsthal(series++) - 1;
 	}
-	if (has_straggler) {
-		groups.insert(std::upper_bound(groups.begin(), groups.end(), straggler),
-			straggler);
-	}
 }
 
 static void	fjmi_sort_list(std::list<Tree> &list)
 {
 	size_t const	half(list.size() >> 1);
-	bool			has_straggler(list.size() & 1);
+	bool const		has_straggler(list.size() & 1);
 	Tree			straggler;
 
 	if (!half) { return; }
@@ -337,6 +336,9 @@ static void	fjmi_sort_list(std::list<Tree> &list)
 		size_t	offset(jacobsthal(++series));
 		if (offset >= list.size()) {
 			offset = list.size() - 1;
+			if (has_straggler) {
+				pend.push_back(straggler);
+			}
 		}
 		std::advance(next, offset - std::distance(list.begin(), next));
 		while (std::distance(list.begin(), next) - done) {
@@ -346,9 +348,9 @@ static void	fjmi_sort_list(std::list<Tree> &list)
 		done = jacobsthal(series);
 	}
 
-	int		count(0);
-	int		prev(0);
-	size_t	offset(3);
+	int							count(0);
+	int							prev(0);
+	size_t						offset(3);
 	std::list<Tree>::iterator	lookahead(list.begin());
 	std::advance(lookahead, offset);
 	for (std::list<Tree>::const_iterator it = pend.begin();
@@ -368,8 +370,8 @@ static void	fjmi_sort_list(std::list<Tree> &list)
 			lookahead = list.end();
 		}
 	}
-	if (has_straggler) {
-		list.insert(std::lower_bound(list.begin(), list.end(), straggler),
-			straggler);
-	}
+	// if (has_straggler) {
+	// 	list.insert(std::lower_bound(list.begin(), list.end(), straggler),
+	// 		straggler);
+	// }
 }
