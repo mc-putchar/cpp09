@@ -166,7 +166,7 @@ void PmergeMe::sort(void)
 		<< (end.tv_sec - start.tv_sec) * 1000
 		+ (end.tv_nsec - start.tv_nsec) / 1000
 		<< "us" << std::endl;
-	std::cout << "Comparisons: " << g_comparisons << std::endl;
+	// std::cout << "Comparisons: " << g_comparisons << std::endl;
 	g_comparisons = 0;
 	clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &start);
 	this->sort_second();
@@ -176,7 +176,7 @@ void PmergeMe::sort(void)
 		<< (end.tv_sec - start.tv_sec) * 1000
 		+ (end.tv_nsec - start.tv_nsec) / 1000
 		<< "us" << std::endl;
-	std::cout << "Comparisons: " << g_comparisons << std::endl;
+	// std::cout << "Comparisons: " << g_comparisons << std::endl;
 	g_comparisons = 0;
 
 	if (!this->validate()) {
@@ -287,6 +287,31 @@ static void	fjmi_sort_vector(std::vector<Group> &groups)
 	}
 }
 
+/* after all, why not */
+static void	binary_inserter(std::list<Tree> &list, size_t end, Tree const &val)
+{
+	std::list<Tree>::iterator	pos(list.begin());
+	size_t						begin(0), mid(0);
+	if (end > list.size()) { end = list.size(); }
+	while (begin < end) {
+		mid = begin + ((end - begin) >> 1);
+		std::advance(pos, mid - std::distance(list.begin(), pos));
+		if (val < *pos) {
+			if (mid == begin) {
+				list.insert(pos, val);
+				return;
+			}
+			end = mid - 1;
+		} else {
+			begin = mid + 1;
+		}
+	}
+	pos = list.begin();
+	std::advance(pos, begin);
+	if (begin < list.size() && *pos < val) { std::advance(pos, 1); }
+	list.insert(pos, val);
+}
+
 static void	fjmi_sort_list(std::list<Tree> &list)
 {
 	size_t const	half(list.size() >> 1);
@@ -300,20 +325,21 @@ static void	fjmi_sort_list(std::list<Tree> &list)
 	}
 	if (half < 2U) {
 		std::list<Tree>::iterator	first(list.begin());
-		std::list<Tree>::iterator	second(list.begin());
+		std::list<Tree>::iterator	second(first);
 		std::advance(second, 1);
 		if (*second < *first) {
 			list.splice(first, list, second);
 		}
 		if (has_straggler) {
-			list.insert(std::lower_bound(list.begin(), list.end(), straggler),
-				straggler);
+			binary_inserter(list, 1U, straggler);
 		}
 		return;
 	}
+
 	std::list<Tree>::iterator			front(list.begin());
 	std::list<Tree>::reverse_iterator	back(list.rbegin());
-	size_t	i(0);
+	size_t								i(0);
+
 	while (i++ < half) {
 		if (*front < *back) {
 			back->add_branch(*front);
@@ -329,8 +355,9 @@ static void	fjmi_sort_list(std::list<Tree> &list)
 
 	std::list<Tree>				pend;
 	std::list<Tree>::iterator	next(list.begin());
-	size_t						done(1);
+	size_t						done(1U);
 	int							series(2);
+
 	list.insert(next, next->pop_branch());
 	while (done < list.size()) {
 		size_t	offset(jacobsthal(++series));
@@ -348,30 +375,18 @@ static void	fjmi_sort_list(std::list<Tree> &list)
 		done = jacobsthal(series);
 	}
 
-	int							count(0);
-	int							prev(0);
-	size_t						offset(3);
-	std::list<Tree>::iterator	lookahead(list.begin());
-	std::advance(lookahead, offset);
+	int		count(0);
+	int		next_group(2);
+	size_t	max_idx(2U);
+
+	series = 3;
 	for (std::list<Tree>::const_iterator it = pend.begin();
 	it != pend.end(); ++it) {
-		list.insert(std::lower_bound(list.begin(), lookahead, *it), *it);
-		++count;
-		if (prev + count < 2 || (prev + count) & (prev + count - 1)) {
-			continue;
-		}
-		prev += count;
+		binary_inserter(list, max_idx, *it);
+		if (++count < next_group) { continue; }
 		count = 0;
-		offset += (prev << 1);
-		if (offset < list.size()) {
-			lookahead = list.begin();
-			std::advance(lookahead, offset);
-		} else {
-			lookahead = list.end();
-		}
+		max_idx = ((max_idx + 2) << 1) - 2;
+		++series;
+		next_group = jacobsthal(series) - jacobsthal(series - 1);
 	}
-	// if (has_straggler) {
-	// 	list.insert(std::lower_bound(list.begin(), list.end(), straggler),
-	// 		straggler);
-	// }
 }

@@ -14,6 +14,7 @@
  *
  * A hybrid of merge sort and binary insertion sort, this algorithm aims to
  * minimize the number of comparisons performed while sorting elements
+ * If your comparisons are expensive, that could be quite useful
  *
  * Simplified instructions:
 	1. Pair up (leave the odd egg out)
@@ -22,7 +23,9 @@
 	4. insert lower values into sequence using Jacobsthal numbers to select
 		those which would require minimal possible range of comparisons
 	5. drop in that odd egg if any
-	6. place in oven for maximum (nlog(n)-n) comparisons before serving
+	6. place in oven for worst case of sum(k=1..N) of ⌈log2(3k/4)⌉ comparisons
+		before serving (according to D. Knuth), or theoretical minimum for
+		N=1..11 or N=20 or N=21
 	7. enjoy your sorted sequence
  *
  * This implementation compares performance of two variants:
