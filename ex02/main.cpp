@@ -6,7 +6,7 @@
 /*   By: mcutura <mcutura@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/22 19:30:18 by mcutura           #+#    #+#             */
-/*   Updated: 2023/10/22 19:30:18 by mcutura          ###   ########.fr       */
+/*   Updated: 2024/05/14 18:01:38 by mcutura          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ int	main(int ac, char **av)
 	return 0;
 }
 
-static bool	onlydigits(char *str)
+bool	onlydigits(char *str)
 {
 	while (*str) {
 		if (*str < '0' || *str > '9')	return false;

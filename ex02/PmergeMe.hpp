@@ -6,7 +6,7 @@
 /*   By: mcutura <mcutura@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/21 22:57:20 by mcutura           #+#    #+#             */
-/*   Updated: 2023/10/21 22:57:20 by mcutura          ###   ########.fr       */
+/*   Updated: 2024/05/14 18:06:35 by mcutura          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,10 @@
 
 #ifndef PMERGEME_HPP
 # define PMERGEME_HPP
+
+# ifndef PRINT_COMPARISONS
+#  define PRINT_COMPARISONS 0
+# endif
 
 # include <algorithm>
 # include <ctime>

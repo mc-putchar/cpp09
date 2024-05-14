@@ -6,7 +6,7 @@
 /*   By: mcutura <mcutura@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/22 19:29:45 by mcutura           #+#    #+#             */
-/*   Updated: 2023/10/22 19:29:45 by mcutura          ###   ########.fr       */
+/*   Updated: 2024/05/14 18:07:04 by mcutura          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -166,7 +166,8 @@ void PmergeMe::sort(void)
 		<< (end.tv_sec - start.tv_sec) * 1000
 		+ (end.tv_nsec - start.tv_nsec) / 1000
 		<< "us" << std::endl;
-	// std::cout << "Comparisons: " << g_comparisons << std::endl;
+	if (PRINT_COMPARISONS)
+		std::cout << "Comparisons: " << g_comparisons << std::endl;
 	g_comparisons = 0;
 	clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &start);
 	this->sort_second();
@@ -176,7 +177,8 @@ void PmergeMe::sort(void)
 		<< (end.tv_sec - start.tv_sec) * 1000
 		+ (end.tv_nsec - start.tv_nsec) / 1000
 		<< "us" << std::endl;
-	// std::cout << "Comparisons: " << g_comparisons << std::endl;
+	if (PRINT_COMPARISONS)
+		std::cout << "Comparisons: " << g_comparisons << std::endl;
 	g_comparisons = 0;
 
 	if (!this->validate()) {

@@ -6,7 +6,7 @@
 #    By: mcutura <mcutura@student.42berlin.de>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/10/21 02:02:29 by mcutura           #+#    #+#              #
-#    Updated: 2024/05/10 18:34:28 by mcutura          ###   ########.fr        #
+#    Updated: 2024/05/14 18:07:57 by mcutura          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,18 +18,19 @@ HDRS := PmergeMe.hpp
 CXX := c++
 CXXFLAGS := -Wall -Wextra -Werror -std=c++98 -Wpedantic
 debug: CXXFLAGS += -ggdb3 -Og
+print_comparisons: CPPFLAGS += -DPRINT_COMPARISONS
 
 RM := rm -rf
 
-.PHONY: all clean debug fclean re
+.PHONY: all clean debug fclean re print_comparisons
 
 all: $(NAME)
 
 $(NAME): $(OBJS) $(HDRS)
-	$(CXX) $(CXXFLAGS) $(OBJS) -o $@
+	$(CXX) $(OBJS) -o $@
 
 $(OBJS) : %.o : %.cpp
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $< -o $@
 
 debug: all
 
@@ -40,3 +41,5 @@ fclean: clean
 	$(RM) $(NAME)
 
 re: fclean all
+
+print_comparisons: re
